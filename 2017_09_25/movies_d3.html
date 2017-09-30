@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Atividade 2</title>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+	<h2 id="q1"><center>Maiores Bilheterias</center></h2>
+	<div id="g1"></div>
+	<h2 id="q2"><center>Maiores Orçamentos</center></h2>
+	<div id="g2"></div>
+	<h2 id="q3"><center>Menores Lucros</center></h2>
+	<div id="g3"></div>
+	<h2 id="q4"><center>Bilheteria por Gênero</center></h2>
+	<div id="g4"></div>
+
+	<script type="text/javascript">
+		
+		function render(dataSet, tipoDeComparo){
+			
+
+			d3.select("#g1").selectAll("div.h-bar").data(dataSet)
+			.enter().append("div").attr("class", "h-bar").append("span");
+		
+			d3.select("#g1").selectAll("div.h-bar").data(dataSet)
+			.attr("class", "h-bar").style("width", function(d){
+				return (d.Worldwide_Gross_M/3) + "px";
+			}).select("span").text(function(d){
+				return d.Film;
+			});
+
+			if(tipoDeComparo){
+				d3.select("#g1").selectAll("div.h-bar").sort(tipoDeComparo);
+			}
+		}
+
+		var comparePorBilheterias = function(x, y){
+			return x.Worldwide_Gross_M > y.Worldwide_Gross_M?-1:1;
+		}
+
+		d3.json("movies.json", function(error, json){
+			render(json, comparePorBilheterias)
+		});
+	</script>
+
+</body>
+</html>
