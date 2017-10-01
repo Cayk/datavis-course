@@ -12,14 +12,15 @@
 	<div id="g1"></div>
 	<h2 id="q2"><center>Maiores Orçamentos</center></h2>
 	<div id="g2"></div>
-	<h2 id="q3"><center>Menores Lucros</center></h2>
+	<h2 id="q3"><center>Maiores Lucros</center></h2>
 	<div id="g3"></div>
 	<h2 id="q4"><center>Bilheteria por Gênero</center></h2>
 	<div id="g4"></div>
 
 	<script type="text/javascript">
 		
-		function render(dataSet, tipoDeComparo){
+		// Script Primeira Questão
+		function renderBilheterias(dataSet, tipoDeComparo){
 			
 
 			d3.select("#g1").selectAll("div.h-bar").data(dataSet)
@@ -41,8 +42,124 @@
 			return x.Worldwide_Gross_M > y.Worldwide_Gross_M?-1:1;
 		}
 
+		// Script Segunda Questão
+		function renderOrcamentos(dataSet, tipoDeComparo){
+			
+
+			d3.select("#g2").selectAll("div.h-bar").data(dataSet)
+			.enter().append("div").attr("class", "h-bar").append("span");
+		
+			d3.select("#g2").selectAll("div.h-bar").data(dataSet)
+			.attr("class", "h-bar").style("width", function(d){
+				return (d.Budget_M*3) + "px";
+			}).select("span").text(function(d){
+				return d.Film;
+			});
+
+			d3.select("#g2").selectAll("div").style("background-color","green");
+
+			if(tipoDeComparo){
+				d3.select("#g2").selectAll("div.h-bar").sort(tipoDeComparo);
+			}
+		}
+
+		var comparePorOrcamentos = function(x, y){
+			return x.Budget_M > y.Budget_M?-1:1;
+		}
+
+		// Script Terceira Questão
+		function renderLucros(dataSet, tipoDeComparo){
+			
+
+			d3.select("#g3").selectAll("div.h-bar").data(dataSet)
+			.enter().append("div").attr("class", "h-bar").append("span");
+		
+			d3.select("#g3").selectAll("div.h-bar").data(dataSet)
+			.attr("class", "h-bar").style("width", function(d){
+				return (d.Worldwide_Gross_M - d.Budget_M)/2 + "px";
+			}).select("span").text(function(d){
+				return d.Film;
+			});
+
+			d3.select("#g3").selectAll("div").style("background-color","red");
+
+			if(tipoDeComparo){
+				d3.select("#g3").selectAll("div.h-bar").sort(tipoDeComparo);
+			}
+		}
+
+		var comparePorLucros = function(x, y){
+			return (x.Worldwide_Gross_M - x.Budget_M) > (y.Worldwide_Gross_M - y.Budget_M) ?-1:1;
+		}
+
+		//Script Questão Bônus
+		var generos = [];
+		
+		function renderGeneros(dataSet, tipoDeComparo){
+			setGeneros(dataSet);
+
+			d3.select("#g4").selectAll("div.h-bar").data(generos)
+			.enter().append("div").attr("class", "h-bar").append("span");
+		
+			d3.select("#g4").selectAll("div.h-bar").data(generos)
+			.attr("class", "h-bar").style("width", function(d){
+				return d.lucro/10 + "px";
+			}).select("span").text(function(d){
+				return d.nome;
+			});
+
+			d3.select("#g4").selectAll("div").style("background-color","gray");
+
+			if(tipoDeComparo){
+				d3.select("#g4").selectAll("div.h-bar").sort(tipoDeComparo);
+			}
+		}
+
+		var comparePorGenerosLucros = function(x, y){
+			return x.lucro > y.lucro ?-1:1;
+		}
+
+		function setGeneros(data){
+		  var genero = {
+		    nome: "",
+		    lucro: 0
+		  }
+
+		  genero.nome = data[0].Genre;
+		  genero.lucro = data[0].Worldwide_Gross_M - data[0].Budget_M;
+		  generos.push(genero);
+		  
+		  data.forEach(function(film){
+		    contain(generos, film);
+		  });
+		}
+
+		function contain(generos, film){
+		  var existe = false;
+		  generos.forEach(function(genero){
+		    if(genero.nome == film.Genre){
+		    	existe = true;
+		    	genero.lucro = genero.lucro + film.Worldwide_Gross_M - film.Budget_M;
+		    }
+		 });
+		  
+			if(!(existe)){
+				var tempGenero = {
+			    	nome: "",
+			    	lucro: 0
+			    }
+
+			    tempGenero.nome = film.Genre;
+			    tempGenero.lucro = film.Worldwide_Gross_M - film.Budget_M;
+			    generos.push(tempGenero);
+			}
+		}
+
 		d3.json("movies.json", function(error, json){
-			render(json, comparePorBilheterias)
+			renderBilheterias(json, comparePorBilheterias)
+			renderOrcamentos(json, comparePorOrcamentos)
+			renderLucros(json, comparePorLucros)
+			renderGeneros(json, comparePorGenerosLucros)
 		});
 	</script>
 
