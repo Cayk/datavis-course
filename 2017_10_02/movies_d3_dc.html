@@ -50,9 +50,10 @@
                      .dimension(dateDim)
                      .x(d3.scale.ordinal())
                      .xUnits(dc.units.ordinal)
-                     .yAxisLabel('Gross')
-                     .barPadding(0.1)
-                	 .outerPadding(0.05)
+                     .yAxisLabel('Bilheteria')
+                     .barPadding(0.3)
+                	 .outerPadding(0.3)
+                	 .xAxisLabel('Ano')
                      .brushOn(false)    
                      .group(dataGross);
 
@@ -62,8 +63,9 @@
                      .dimension(generos)
                      .x(d3.scale.ordinal())
                      .xUnits(dc.units.ordinal)
-                     .yAxisLabel('Gross')
-                     .barPadding(0.1)
+                     .yAxisLabel('Bilheteria')
+                     .xAxisLabel('Gênero')
+                     .barPadding(0.3)
                 	 .outerPadding(0.05)
                      .brushOn(false)    
                      .group(grossGenero);
